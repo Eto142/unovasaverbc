@@ -2,7 +2,6 @@
 
 @section('title', 'Login Notification — Unova Saver Bank Corporation')
 @section('badge', 'Security Notice')
-@section('icon', '🔐')
 @section('header_title', 'New Login Detected')
 
 @section('body')

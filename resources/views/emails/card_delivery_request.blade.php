@@ -1,7 +1,6 @@
 @extends('mail.layout')
 @section('title', 'Card Delivery Request — Unova Saver Bank Corporation')
 @section('badge', 'Card Delivery')
-@section('icon', '📦')
 @section('header_title', 'Card Delivery Request')
 @section('body')
 

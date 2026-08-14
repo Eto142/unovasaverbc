@@ -1,7 +1,6 @@
 @extends('mail.layout')
 @section('title', 'ID Verification Unsuccessful – Unova Saver Bank Corporation')
 @section('badge', 'Verification Failed')
-@section('icon', '❌')
 @section('header_title', 'ID Verification Unsuccessful')
 @section('body')
 <p style="margin:0 0 18px;color:#374151;font-size:15px;line-height:1.7">

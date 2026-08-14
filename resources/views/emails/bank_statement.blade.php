@@ -1,7 +1,6 @@
 @extends('mail.layout')
 @section('title', 'Bank Statement — Unova Saver Bank Corporation')
 @section('badge', 'Bank Statement')
-@section('icon', '📄')
 @section('header_title', 'Your Bank Statement')
 @section('body')
 

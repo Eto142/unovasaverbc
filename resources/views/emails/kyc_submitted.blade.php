@@ -1,7 +1,6 @@
 @extends('mail.layout')
 @section('title', 'Documents Received – Unova Saver Bank Corporation')
 @section('badge', 'Identity Verification')
-@section('icon', '🛡️')
 @section('header_title', 'Documents Received – Under Review')
 @section('body')
 <p style="margin:0 0 18px;color:#374151;font-size:15px;line-height:1.7">

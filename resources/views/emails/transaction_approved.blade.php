@@ -1,7 +1,6 @@
 @extends('mail.layout')
 @section('title', 'Transaction Approved — Unova Saver Bank Corporation')
 @section('badge', 'Transaction')
-@section('icon', '✅')
 @section('header_title', 'Transaction Approved')
 @section('body')
 

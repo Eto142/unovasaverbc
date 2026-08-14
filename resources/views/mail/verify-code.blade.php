@@ -2,7 +2,6 @@
 
 @section('title', 'Account Verification — Unova Saver Bank Corporation')
 @section('badge', 'New Account')
-{{-- @section('icon', '✅') --}}
 @section('header_title', 'Verify Your Account')
 
 @section('body')

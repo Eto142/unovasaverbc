@@ -1,7 +1,6 @@
 ﻿@extends('mail.layout')
 @section('title', 'Login Verification Code')
 @section('badge', 'Security Notice')
-@section('icon', '🔐')
 @section('header_title', 'Login Verification Code')
 @section('body')
 <p style="margin:0 0 6px;color:#111827;font-size:16px;font-weight:600">Hello {{ $otp['first_name'] }},</p>

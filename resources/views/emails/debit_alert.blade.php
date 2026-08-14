@@ -1,7 +1,6 @@
 @extends('mail.layout')
 @section('title', 'Debit Alert - Unova Saver Bank Corporation')
 @section('badge', 'Debit Alert')
-@section('icon', '💸')
 @section('header_title', 'Debit Alert - Funds Debited')
 @section('body')
 

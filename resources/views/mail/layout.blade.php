@@ -15,16 +15,18 @@
         <!-- Header -->
         <tr>
           <td style="background:linear-gradient(135deg,#a51c24 0%,#e51c24 100%);border-radius:14px 14px 0 0;padding:32px 40px;text-align:center">
+            <!-- Logo -->
+            <table cellpadding="0" cellspacing="0" border="0" style="margin:0 auto 18px">
+              <tr>
+                <td style="background:#ffffff;border-radius:12px;padding:10px 20px;text-align:center">
+                  <img src="{{ asset('our-logo.png') }}" alt="Unova Saver Bank Corporation" width="150" style="display:block;width:150px;max-width:150px;height:auto;border:0;outline:none">
+                </td>
+              </tr>
+            </table>
             <!-- Badge -->
             <div style="display:inline-block;background:rgba(255,255,255,0.18);border:1.5px solid rgba(255,255,255,0.35);border-radius:50px;padding:5px 16px;margin-bottom:16px">
               <span style="color:#fff;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase">@yield('badge', 'unova saver Bank')</span>
             </div>
-            <!-- Icon -->
-            <table cellpadding="0" cellspacing="0" border="0" style="margin:0 auto 14px">
-              <tr>
-                <td width="64" height="64" style="background:rgba(255,255,255,0.2);border-radius:50%;text-align:center;vertical-align:middle;font-size:28px;line-height:64px">@yield('icon', '🏦')</td>
-              </tr>
-            </table>
             <!-- Title -->
             <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:700;letter-spacing:-0.3px">@yield('header_title', 'Unova Saver Bank Corporation')</h1>
             <p style="margin:8px 0 0;color:rgba(255,255,255,0.7);font-size:13px">Unova Saver Bank Corporation</p>

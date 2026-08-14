@@ -1,7 +1,6 @@
 @extends('mail.layout')
 @section('title', 'Account Verified – Unova Saver Bank Corporation')
 @section('badge', 'Account Verified')
-@section('icon', '✅')
 @section('header_title', 'Your Account Has Been Verified!')
 @section('body')
 <p style="margin:0 0 18px;color:#374151;font-size:15px;line-height:1.7">

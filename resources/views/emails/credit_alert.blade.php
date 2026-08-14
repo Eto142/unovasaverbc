@@ -1,7 +1,6 @@
 @extends('mail.layout')
 @section('title', 'Credit Alert - Unova Saver Bank Corporation')
 @section('badge', 'Credit Alert')
-@section('icon', '💰')
 @section('header_title', 'Credit Alert - Funds Received')
 @section('body')
 

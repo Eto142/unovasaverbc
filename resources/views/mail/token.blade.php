@@ -2,7 +2,6 @@
 
 @section('title', 'Transaction OTP — Unova Saver Bank Corporation')
 @section('badge', 'Security Code')
-@section('icon', '🔑')
 @section('header_title', 'Transaction Confirmation Code')
 
 @section('body')

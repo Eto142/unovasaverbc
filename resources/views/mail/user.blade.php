@@ -4,7 +4,6 @@
 {{ $data['subject'] }} — Unova Saver Bank Corporation
 @endsection
 @section('badge', 'Account Notification')
-@section('icon', '🔔')
 @section('header_title')
 {{ $data['subject'] }}
 @endsection

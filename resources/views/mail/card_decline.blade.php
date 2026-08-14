@@ -2,7 +2,6 @@
 
 @section('title', 'Card Application Update — Unova Saver Bank Corporation')
 @section('badge', 'Card Update')
-@section('icon', '💳')
 @section('header_title', 'Card Application Update')
 
 @section('body')
