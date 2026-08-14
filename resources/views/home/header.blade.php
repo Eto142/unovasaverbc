@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="description" content="Unova Saver — Secure, modern digital banking for personal and business needs.">
+<meta name="description" content="Unova Saver  Secure, modern digital banking for personal and business needs.">
 <meta name="keywords" content="Bank, Unova Saver, Internet Banking, Digital Banking, Savings, Loans">
-<meta property="og:description" content="Unova Saver — Banking made simple, secure, and smart.">
+<meta property="og:description" content="Unova Saver  Banking made simple, secure, and smart.">
 <meta property="og:site_name" content="Unova Saver">
 <link rel="canonical" href="/">
 <title>Unova Saver</title>
@@ -150,7 +150,7 @@
     z-index: 9999 !important;
   }
 
-  /* OPTIONAL: Center at top instead of top-right — uncomment below to use */
+  /* OPTIONAL: Center at top instead of top-right  uncomment below to use */
   /*
   .gtranslate_wrapper {
     position: fixed !important;
