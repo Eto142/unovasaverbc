@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>unova saver</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
+  <link href="assets/css/dashboard.css" rel="stylesheet" />
+  
+</head>
+<body>
+
+<div class="container pt-4">
+  <div class="d-flex justify-content-between align-items-center">
+ <a href="{{ route('profile') }}" class="text-decoration-none text-dark d-flex align-items-center">
+  <!-- Profile Picture Circle -->
+  <div class="rounded-circle overflow-hidden me-3" style="width: 40px; height: 40px; position: relative;">
+    @if(Auth::user()->display_picture)
+      <img src="{{ asset('uploads/display/' . Auth::user()->display_picture) }}" 
+           alt="Profile" 
+           class="w-100 h-100 object-fit-cover"
+           onclick="event.preventDefault(); triggerFileInput()"
+           style="cursor: pointer;">
+    @else
+      <div class="bg-secondary w-100 h-100 d-flex align-items-center justify-content-center"
+           onclick="event.preventDefault(); triggerFileInput()"
+           style="cursor: pointer;">
+        <span class="text-white">{{ strtoupper(substr(Auth::user()->first_name, 0, 1)) }}</span>
+      </div>
+    @endif
+  </div>
+  
+  <!-- Greeting Text -->
+  <div>
+    <h6 class="mb-0 fw-semibold">Hello, {{ Auth::user()->first_name }}!</h6>
+  </div>
+</a>
+
+<!-- Hidden Form for Profile Picture Upload -->
+<form id="uploadForm" action="{{ route('personal.dp') }}" method="POST" enctype="multipart/form-data" style="display: none;">
+  @csrf
+  <input type="file" id="profilePictureInput" name="image" accept="image/*" onchange="uploadProfilePicture()">
+</form>
+
+
+    <div class="text-end">
+      <span class="text-muted small d-block">
+        <span id="accountNumber"> {{ Auth::user()->a_number }}</span>
+        <i class="bi bi-copy ms-1 clickable" id="copyIcon" onclick="copyAccountNumber()" data-bs-toggle="tooltip" data-bs-placement="top" title="Copy to clipboard"></i>
+      </span>
+    </div>
+  </div>
+
+  <div class="mt-2">
+    <span class="badge bg-light text-dark small-text">{{ Auth::user()->account_type}}</span>
+  </div>
+
+ @if (Auth::user()->user_block == 1)
+    <div class="alert alert-danger d-flex align-items-center shadow-sm p-3 rounded" role="alert">
+        <i class="bi bi-lock-fill me-2" style="font-size: 1.5rem;"></i>
+        <div>
+            <strong>Account Blocked:</strong> Please clear your outstanding tax obligations to restore access.
+        </div>
+    </div>
+@elseif (Auth::user()->user_activity == 1)
+    <div class="alert alert-warning d-flex align-items-center shadow-sm p-3 rounded mt-3" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2" style="font-size: 1.5rem;"></i>
+        <div>
+            <strong>Suspicious Activity Detected:</strong> Your account has been flagged for potential money laundering. please contact support
+        </div>
+    </div>
+@else
+    <div class="mt-2 d-flex align-items-center gap-2">
+        <span class="text-muted small-text">Book Balance:</span>
+        <span id="balance" class="fw-bold clickable">
+            {{ Auth::user()->currency }}{{ number_format($balance, 2) }}
+        </span>
+    </div>
+@endif
+
+  <!-- Buttons -->
+  <div class="d-flex gap-2 mt-3">
+  <a href="{{route('deposit')}}" class="btn btn-main flex-fill">
+    <i class="bi bi-plus-circle"></i> Fund account
+  </a>
+  <a href="{{route('bank')}}" class="btn btn-outline-main flex-fill">
+    <i class="bi bi-arrow-right"></i> Transfer
+  </a>
+  <a href="{{route('cfx')}}" class="btn btn-outline-main flex-fill">
+    <i class="bi bi-currency-exchange"></i> FX
+  </a>
+</div>
+
+
+ <!-- Shortcuts -->
+<h6 class="mt-4">Shortcuts</h6>
+
+@if(session('statement_success'))
+  <div class="alert alert-success alert-dismissible fade show py-2 small" role="alert">
+    <i class="bi bi-check-circle me-1"></i> {{ session('statement_success') }}
+    <button type="button" class="btn-close btn-sm" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+@endif
+@if(session('statement_error'))
+  <div class="alert alert-danger alert-dismissible fade show py-2 small" role="alert">
+    <i class="bi bi-exclamation-circle me-1"></i> {{ session('statement_error') }}
+    <button type="button" class="btn-close btn-sm" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+@endif
+<div class="d-flex justify-content-around text-center">
+  <a href="{{route('cryptopage')}}" class="text-decoration-none text-dark">
+    <div>
+      <div class="shortcut-icon bg-shortcut-1"><i class="bi bi-currency-bitcoin"></i></div>
+      <small>Crypto</small>
+    </div>
+  </a>
+    <a href="{{route('deposit')}}" class="text-decoration-none text-dark">
+    <div>
+      <div class="shortcut-icon bg-shortcut-3"><i class="bi bi-bank2"></i></div>
+      <small>Deposit</small>
+    </div>
+  </a>
+  <a href="{{route('loan')}}" class="text-decoration-none text-dark">
+    <div>
+      <div class="shortcut-icon bg-shortcut-3"><i class="bi bi-credit-card"></i></div>
+      <small>Loan</small>
+    </div>
+  </a>
+    <a href="{{route('paybills')}}" class="text-decoration-none text-dark">
+    <div>
+      <div class="shortcut-icon bg-shortcut-3"><i class="bi bi-cash-stack"></i></div>
+      <small>Pay Bill</small>
+    </div>
+  </a>
+  <a href="{{route('paypal')}}" class="text-decoration-none text-dark">
+    <div>
+      <div class="shortcut-icon bg-shortcut-4"><i class="bi bi-paypal"></i></div>
+      <small>PayPal</small>
+    </div>
+  </a>
+  <a href="#" class="text-decoration-none text-dark" data-bs-toggle="modal" data-bs-target="#bankStatementModal">
+    <div>
+      <div class="shortcut-icon bg-shortcut-2"><i class="bi bi-file-earmark-text"></i></div>
+      <small>Statement</small>
+    </div>
+  </a>
+</div>
+
+<!-- Bank Statement Modal -->
+<div class="modal fade" id="bankStatementModal" tabindex="-1" aria-labelledby="bankStatementModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title fw-semibold" id="bankStatementModalLabel">
+          <i class="bi bi-file-earmark-text me-2"></i>Request Bank Statement
+        </h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{{ route('send.bank.statement') }}" method="POST">
+        @csrf
+        <div class="modal-body">
+          <p class="text-muted small mb-3">Your bank statement will be sent to <strong>{{ Auth::user()->email }}</strong>.</p>
+          <div class="mb-3">
+            <label for="start_date" class="form-label small">From</label>
+            <input type="date" class="form-control" id="start_date" name="start_date" required>
+          </div>
+          <div class="mb-3">
+            <label for="end_date" class="form-label small">To</label>
+            <input type="date" class="form-control" id="end_date" name="end_date" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-main btn-sm">
+            <i class="bi bi-send me-1"></i>Send to Email
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Transaction -->
+<!-- Transaction -->
+<h6 class="mt-4 d-flex justify-content-between align-items-center">
+  Transaction history
+  <a href="{{route('transactions')}}" class="small text-decoration-none">See more</a>
+</h6>
+
+@if($transaction->isEmpty())
+  <div class="text-center text-muted py-4">
+    No transactions yet.
+  </div>
+@else
+  @foreach($transaction as $details)
+    <div class="transaction-box d-flex justify-content-between align-items-center mb-2">
+      <div>
+        <div class="d-flex align-items-center gap-2">
+          @if($details->transaction == 'Bank Transfer')
+            <i class="bi bi-arrow-right-circle-fill text-success"></i>
+          @elseif($details->transaction == 'Loan')
+            <i class="bi bi-arrow-up-circle-fill text-dark"></i>
+          @elseif($details->transaction == 'Card')
+            <i class="bi bi-credit-card-fill text-dark"></i>
+          @elseif($details->transaction == 'Crypto Withdrawal')
+            <i class="bi bi-currency-bitcoin text-warning"></i>
+          @elseif($details->transaction == 'Paypal Withdrawal')
+            <i class="bi bi-paypal text-info"></i>
+          @elseif($details->transaction == 'Skrill Withdrawal')
+            <i class="bi bi-wallet2 text-success"></i>
+          @else
+            <i class="bi bi-info-circle-fill text-muted"></i>
+          @endif
+
+          <span class="small">
+            {{ Str::limit($details->transaction_description, 25) }}
+          </span>
+        </div>
+        <small class="text-muted">{{ $details->transaction }}</small>
+      </div>
+
+      <div class="text-end">
+        <small class="text-muted">
+          @if(str_contains($details->transaction_description, 'From'))
+            {{ $details->transaction_description }}
+          @else
+            From •••{{ substr($details->account_number ?? '0000', -4) }}
+          @endif
+        </small>
+        <br>
+        <small>
+          @if(in_array($details->transaction, ['Bank Transfer', 'Paypal Withdrawal', 'Skrill Withdrawal', 'Crypto Withdrawal']))
+            -{{ Auth::user()->currency }}{{ number_format($details->transaction_amount, 2) }}
+          @elseif($details->transaction == 'Loan')
+            +{{ Auth::user()->currency }}{{ number_format($details->transaction_amount, 2) }}
+          @elseif($details->transaction == 'Card')
+            &nbsp;
+          @endif
+        </small>
+        <br>
+        @if($details->transaction == 'Card' && $details->transaction_status == '1')
+          <a href="javascript:void(0)" class="badge light badge-success">Approved</a>
+        @elseif($details->transaction_status == '1')
+          <a href="javascript:void(0)" class="badge light badge-success">Successful</a>
+        @elseif($details->transaction_status == '0')
+          <a href="javascript:void(0)" class="badge light badge-primary">Pending</a>
+        @else
+          <a href="javascript:void(0)" class="badge light badge-warning">Failed</a>
+        @endif
+      </div>
+    </div>
+  @endforeach
+@endif
+
+
+ <!-- Investments -->
+@forelse($trades as $trade)
+  <div class="card border-0 shadow-sm bg-white mb-3 rounded-4 overflow-hidden">
+    <div class="card-body p-4">
+      <div class="d-flex justify-content-between align-items-start">
+        <!-- Trade Details -->
+        <div class="flex-grow-1 pe-3">
+          <!-- Asset Header -->
+          <div class="d-flex align-items-center mb-2">
+            <span class="badge bg-primary bg-opacity-10 text-primary fw-semibold me-2 py-1 px-2 rounded-2">
+              {{ strtoupper($trade->asset_symbol) }}
+            </span>
+            <h6 class="mb-0 fw-bold text-dark">{{ $trade->asset_name }}</h6>
+          </div>
+          
+          <!-- Trade Metadata -->
+          <div class="row g-2 small">
+            <div class="col-6">
+              <div class="text-muted">Type</div>
+              <div class="fw-medium">{{ ucfirst($trade->type) }}</div>
+            </div>
+            <div class="col-6">
+              <div class="text-muted">Order</div>
+              <div class="fw-medium">{{ ucfirst($trade->order_type) }}</div>
+            </div>
+            <div class="col-6">
+              <div class="text-muted">Amount</div>
+              <div class="fw-medium">${{ number_format($trade->amount_usd, 2) }}</div>
+            </div>
+            <div class="col-6">
+              <div class="text-muted">Quantity</div>
+              <div class="fw-medium">{{ $trade->quantity }}</div>
+            </div>
+            @if($trade->limit_price)
+            <div class="col-12">
+              <div class="text-muted">Limit Price</div>
+              <div class="fw-medium">${{ number_format($trade->limit_price, 2) }}</div>
+            </div>
+            @endif
+          </div>
+        </div>
+        
+        <!-- Icon -->
+        <div class="text-primary bg-primary bg-opacity-10 p-3 rounded-3">
+          <i class="bi bi-safe2-fill" style="font-size: 1.8rem;"></i>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Status/Progress Bar (optional) -->
+    <div class="progress rounded-0" style="height: 4px;">
+      <div class="progress-bar bg-primary" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+  </div>
+@empty
+  <div class="card border-0 bg-light mb-4">
+    <div class="card-body text-center py-5">
+      <i class="bi bi-safe2-fill text-muted opacity-50" style="font-size: 3rem;"></i>
+      <h5 class="mt-3 mb-1 fw-semibold">No investments yet</h5>
+      <p class="text-muted small mb-0">Your investment portfolio will appear here</p>
+    </div>
+  </div>
+@endforelse
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  function triggerFileInput() {
+    document.getElementById('profilePictureInput').click();
+  }
+
+  function uploadProfilePicture() {
+    document.getElementById('uploadForm').submit();
+  }
+</script>
+
+
+@include('dashboard.footer')
+</body>
+</html>

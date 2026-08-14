@@ -1,0 +1,891 @@
+
+@include('admin.header', ['title' => trim($userProfile->first_name.' '.$userProfile->last_name)])
+@include('admin.navbar')
+<!-- Content wrapper start -->
+					<div class="content-wrapper">
+    <!-- Breadcrumb -->
+    <div class="mb-3">
+        <a href="{{ route('admin.manage.users') }}" class="text-decoration-none small text-muted">
+            <i class="bi bi-arrow-left"></i> Back to Manage Users
+        </a>
+        <h4 class="mb-0 mt-1">{{$userProfile->first_name}} {{$userProfile->last_name}}</h4>
+    </div>
+
+    <!-- User Profile Header -->
+    <div class="row gx-3 mb-4">
+        <div class="col-lg-4 col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <div class="position-relative">
+                        @if($userProfile->user_status==="0")
+                            <a href="{{route('admin.verify_user',$userProfile->id)}}"
+                               class="btn btn-outline-danger btn-sm position-absolute top-0 end-0 m-2"
+                               onclick="return confirm('Freeze this account? The user will lose access immediately.')">
+                                <i class="bi bi-lock"></i> Freeze
+                            </a>
+                        @else
+                            <a href="{{route('admin.unfreeze_user',$userProfile->id)}}" class="btn btn-success btn-sm position-absolute top-0 end-0 m-2">
+                                <i class="bi bi-unlock"></i> Unfreeze
+                            </a>
+                        @endif
+
+                        <img src="{{ $userProfile->display_picture ? asset('uploads/display/'.$userProfile->display_picture) : asset('assets/images/avatar.jpg') }}"
+                             alt="User Avatar" class="contact-avatar mb-3" width="150" height="150">
+                        <h4 class="mb-3">{{$userProfile->first_name}} {{$userProfile->last_name}}</h4>
+
+                        <div class="d-flex justify-content-center flex-wrap gap-2 mb-3">
+                            <span class="badge bg-{{$userProfile->user_status==='0' ? 'success' : 'danger'}}">
+                                {{$userProfile->user_status==="0" ? 'Active' : 'Frozen'}}
+                            </span>
+                            <span class="badge bg-{{$userProfile->user_block==='0' ? 'success' : 'danger'}}">
+                                {{$userProfile->user_block==="0" ? 'Unblocked' : 'Blocked'}}
+                            </span>
+                            <span class="badge bg-{{$userProfile->user_activity==='0' ? 'danger' : 'warning'}}">
+                                {{$userProfile->user_activity==="0" ? 'ML Deactivated' : 'ML Activated'}}
+                            </span>
+                            @if($userProfile->kyc_status=='1')
+                                <span class="badge bg-primary"><i class="bi bi-patch-check-fill me-1"></i>KYC Verified</span>
+                            @elseif($userProfile->kyc_status=='2')
+                                <span class="badge bg-danger">KYC Declined</span>
+                            @elseif($userProfile->id_card || $userProfile->passport || $userProfile->driver_license)
+                                <span class="badge bg-warning text-dark">KYC Pending</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="text-start profile-detail-list">
+                        <p><strong><i class="bi bi-envelope me-2"></i>Email</strong> <span>{{$userProfile->email}}</span></p>
+                        <p><strong><i class="bi bi-credit-card me-2"></i>Account #</strong> <span>{{$userProfile->a_number}}</span></p>
+                        <p><strong><i class="bi bi-key me-2"></i>Account Pin</strong> <span>{{$userProfile->account_pin}}</span></p>
+                        <p><strong><i class="bi bi-phone me-2"></i>Phone</strong> <span>{{$userProfile->phone_number}}</span></p>
+                        <p><strong><i class="bi bi-globe me-2"></i>Country</strong> <span>{{$userProfile->country}}</span></p>
+                        <p><strong><i class="bi bi-shield-lock me-2"></i>TAC Code</strong> <span>{{$userProfile->otp}}</span></p>
+                        <p><strong><i class="bi bi-cash-stack me-2"></i>Loan Eligibility</strong> <span>{{$userProfile->currency}}{{number_format($userProfile->eligible_loan, 2)}}</span></p>
+                        <p><strong><i class="bi bi-wallet2 me-2"></i>Balance</strong> <span class="fw-bold">{{$userProfile->currency}}{{number_format($balance, 2)}}</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="col-lg-8 col-md-12">
+            <div class="row">
+                <!-- Account Status -->
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header bg-dark text-white">
+                            <h5 class="mb-0"><i class="bi bi-shield-lock me-2"></i>Account Status</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                @if($userProfile->user_status==="0")
+                                    <a href="{{route('admin.verify_user',$userProfile->id)}}" class="btn btn-outline-danger"
+                                       onclick="return confirm('Freeze this account? The user will lose access immediately.')">
+                                        <i class="bi bi-lock"></i> Freeze Account
+                                    </a>
+                                @else
+                                    <a href="{{route('admin.unfreeze_user',$userProfile->id)}}" class="btn btn-outline-success">
+                                        <i class="bi bi-unlock"></i> Unfreeze Account
+                                    </a>
+                                @endif
+
+                                @if($userProfile->user_block==="0")
+                                    <a href="{{route('admin.user_block',$userProfile->id)}}" class="btn btn-outline-warning"
+                                       onclick="return confirm('Block this user? They will lose access immediately.')">
+                                        <i class="bi bi-person-x"></i> Block User
+                                    </a>
+                                @else
+                                    <a href="{{route('admin.iuser_block',$userProfile->id)}}" class="btn btn-outline-success">
+                                        <i class="bi bi-person-check"></i> Unblock User
+                                    </a>
+                                @endif
+
+                                @if($userProfile->user_activity==="0")
+                                    <a href="{{route('admin.user_activity',$userProfile->id)}}" class="btn btn-outline-warning">
+                                        <i class="bi bi-activity"></i> Activate ML Monitoring
+                                    </a>
+                                @else
+                                    <a href="{{route('admin.iuser_activity',$userProfile->id)}}" class="btn btn-outline-secondary">
+                                        <i class="bi bi-eye-slash"></i> Deactivate ML Monitoring
+                                    </a>
+                                @endif
+
+                                <a href="{{route('admin.impersonate',$userProfile->id)}}" class="btn btn-dark" onclick="return confirm('You will be logged in as this user. Continue?')">
+                                    <i class="bi bi-box-arrow-in-right"></i> Access Account
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Financial Actions -->
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0"><i class="bi bi-cash-coin me-2"></i>Financial Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModalCenter">
+                                    <i class="bi bi-plus-circle"></i> Credit Account
+                                </button>
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModalCenter2">
+                                    <i class="bi bi-dash-circle"></i> Debit Account
+                                </button>
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModalCenter3">
+                                    <i class="bi bi-currency-dollar"></i> Update Loan Limit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security & Credentials -->
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header bg-warning text-dark">
+                            <h5 class="mb-0"><i class="bi bi-key me-2"></i>Security &amp; Credentials</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#exampleModalCenter9">
+                                    <i class="bi bi-shield-lock"></i> Update TAC Code
+                                </button>
+                                <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#exampleModalCenter99">
+                                    <i class="bi bi-envelope"></i> Update Email
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delivery Information -->
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0"><i class="bi bi-truck me-2"></i>Delivery Information</h5>
+                        </div>
+                        <div class="card-body profile-detail-list">
+                            <p><strong>Name</strong> <span>{{$userProfile->fname ?: '—'}}</span></p>
+                            <p><strong>Address</strong> <span>{{$userProfile->delivery_address ?: '—'}}</span></p>
+                            <p><strong>Phone</strong> <span>{{$userProfile->delivery_phone ?: '—'}}</span></p>
+                            <p><strong>Email</strong> <span>{{$userProfile->emailAddress ?: '—'}}</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modals -->
+    <!-- Credit Modal -->
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">Credit {{$userProfile->first_name}}'s Account</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{route('admin.credit.user')}}" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <input type="hidden" name="email" value="{{$userProfile->email}}"/>
+                        <input type="hidden" name="name" value="{{$userProfile->first_name}} {{$userProfile->last_name}}"/>
+                        <input type="hidden" name="id" value="{{$userProfile->id}}"/>
+                        <input type="hidden" name="balance" value="{{$balance}}"/>
+                        <input type="hidden" name="a_number" value="{{$userProfile->a_number}}"/>
+                        <input type="hidden" name="currency" value="{{$userProfile->currency}}"/>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Amount ({{$userProfile->currency}})</label>
+                            <input type="number" step="0.01" name="amount" class="form-control" placeholder="Enter Amount" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Sender Name</label>
+                            <input type="text" name="sender_name" class="form-control" placeholder="Enter Sender Name" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Sender Account Number</label>
+                            <input type="text" name="sender_account" class="form-control" placeholder="Enter Sender Account Number" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Bank Name</label>
+                            <input type="text" name="bank_name" class="form-control" placeholder="Enter Bank Name" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-control" rows="3" required></textarea>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                            <label class="form-label">Transaction Date</label>
+                            <input type="datetime-local" name="transaction_date" id="credit_transaction_date" class="form-control" required>
+                        </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success">Credit Account</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Debit Modal -->
+    <div class="modal fade" id="exampleModalCenter2" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Debit {{$userProfile->first_name}}'s Account</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{route('admin.debit.user')}}" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <input type="hidden" name="email" value="{{$userProfile->email}}"/>
+                        <input type="hidden" name="name" value="{{$userProfile->first_name}} {{$userProfile->last_name}}"/>
+                        <input type="hidden" name="id" value="{{$userProfile->id}}"/>
+                        <input type="hidden" name="balance" value="{{$balance}}"/>
+                        <input type="hidden" name="a_number" value="{{$userProfile->a_number}}"/>
+                        <input type="hidden" name="currency" value="{{$userProfile->currency}}"/>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Amount ({{$userProfile->currency}})</label>
+                            <input type="number" step="0.01" name="amount" class="form-control" placeholder="Enter Amount" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Transaction Date</label>
+                            <input type="datetime-local" name="transaction_date" id="debit_transaction_date" class="form-control" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-control" rows="3" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Debit Account</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loan Eligibility Modal -->
+    <div class="modal fade" id="exampleModalCenter3" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Update Loan Eligibility</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{route('admin.update.eligible',$userProfile->id)}}" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <input type="hidden" name="id" value="{{$userProfile->id}}"/>
+                        <div class="mb-3">
+                            <label class="form-label">New Loan Eligibility Amount ({{$userProfile->currency}})</label>
+                            <input type="number" name="eligible_loan" class="form-control" value="{{$userProfile->eligible_loan}}" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Update Limit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- TAC Code Modal -->
+    <div class="modal fade" id="exampleModalCenter9" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-secondary text-white">
+                    <h5 class="modal-title">Update TAC Code</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{route('admin.update.otp',$userProfile->id)}}" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <input type="hidden" name="id" value="{{$userProfile->id}}"/>
+                        <div class="mb-3">
+                            <label class="form-label">New TAC Code</label>
+                            <input type="number" name="otp" class="form-control" value="{{$userProfile->otp}}" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Update TAC Code</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Email Update Modal -->
+    <div class="modal fade" id="exampleModalCenter99" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title">Update Email Address</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{route('admin.update.email',$userProfile->id)}}" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <input type="hidden" name="id" value="{{$userProfile->id}}"/>
+                        <div class="mb-3">
+                            <label class="form-label">New Email Address</label>
+                            <input type="email" name="email" class="form-control" value="{{$userProfile->email}}" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-dark">Update Email</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tab Navigation -->
+    <div class="row">
+        <div class="col-12">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="transactions-tab" data-bs-toggle="tab" data-bs-target="#transactions" type="button" role="tab">
+                        <i class="bi bi-list-check me-1"></i> Transactions
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="deposits-tab" data-bs-toggle="tab" data-bs-target="#deposits" type="button" role="tab">
+                        <i class="bi bi-cash-stack me-1"></i> Deposits
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="loans-tab" data-bs-toggle="tab" data-bs-target="#loans" type="button" role="tab">
+                        <i class="bi bi-currency-exchange me-1"></i> Loans
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link @if($userProfile->kyc_status=='0' && ($userProfile->id_card || $userProfile->passport || $userProfile->driver_license)) position-relative @endif"
+                            id="kyc-tab" data-bs-toggle="tab" data-bs-target="#kyc" type="button" role="tab">
+                        <i class="bi bi-person-badge me-1"></i> KYC
+                        @if($userProfile->kyc_status=='0' && ($userProfile->id_card || $userProfile->passport || $userProfile->driver_license))
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark" style="font-size:.6rem">
+                                !<span class="visually-hidden">pending review</span>
+                            </span>
+                        @endif
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="cards-tab" data-bs-toggle="tab" data-bs-target="#cards" type="button" role="tab">
+                        <i class="bi bi-credit-card me-1"></i> Cards
+                    </button>
+                </li>
+            </ul>
+            
+            <div class="tab-content p-3 border border-top-0 rounded-bottom shadow-sm" id="myTabContent">
+                <!-- Transactions Tab -->
+                <div class="tab-pane fade show active" id="transactions" role="tabpanel">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-card-collapse">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Transaction ID</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($user_transactions as $transaction)
+                                <tr>
+                                    <td>{{$transaction->transaction_ref}}</td>
+                                    <td>{{$transaction->transaction_type}}</td>
+                                    <td>{{$transaction->transaction_description}}</td>
+                                    <td>{{$userProfile->currency}}{{number_format($transaction->transaction_amount, 2)}}</td>
+                                    <td>
+                                        @if ($transaction->transaction_status == '1')
+                                        <span class="badge bg-success">Completed</span>
+                                        @elseif($transaction->transaction_status == '0')
+                                        <span class="badge bg-warning">Pending</span>
+                                        @elseif($transaction->transaction_status == '2')
+                                        <span class="badge bg-danger">Failed</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <form action="{{ route('admin.update-transaction-date', $transaction->id) }}" method="POST" class="d-flex">
+    @csrf
+    <input type="datetime-local" name="new_date" value="{{ $transaction->created_at->format('Y-m-d\TH:i') }}" class="form-control form-control-sm me-2">
+    <button type="submit" class="btn btn-sm btn-outline-primary">Update</button>
+</form>
+
+                                    </td>
+                                    <td class="d-flex flex-column flex-sm-row gap-2">
+                                        <form action="{{route('admin.approve-transaction', $transaction->id)}}" method="POST" class="me-2">
+                                            @csrf
+                                            <input type="hidden" name="transaction_status" value="1">
+                                            <input type="hidden" name="user_id" value="{{ $transaction->user_id }}">
+                                            <input type="hidden" name="currency" value="{{$userProfile->currency}}"/>
+                                            <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                                        </form>
+                                        <form action="{{route('admin.decline-transaction', $transaction->id)}}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="transaction_status" value="2">
+                                            <input type="hidden" name="user_id" value="{{$transaction->user_id}}">
+                                            <input type="hidden" name="email" value="{{$transaction->email}}">
+                                            <input type="hidden" name="amount" value="{{$transaction->amount}}">
+                                            <input type="hidden" name="currency" value="{{$userProfile->currency}}"/>
+                                            <button type="submit" class="btn btn-sm btn-danger">Decline</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted py-4">
+                                        <i class="bi bi-inbox fs-4 d-block mb-1 opacity-50"></i>
+                                        No transactions yet.
+                                    </td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Deposits Tab -->
+                <div class="tab-pane fade" id="deposits" role="tabpanel">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-card-collapse">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Transaction ID</th>
+                                    <th>Amount</th>
+                                    <th>Type</th>
+                                    <th>Proof</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($userdeposits as $deposit)
+                                <tr>
+                                    <td>{{$deposit->id}}</td>
+                                    <td>{{$userProfile->currency}}{{number_format($deposit->amount, 2)}}</td>
+                                    <td>{{$deposit->deposit_type}}</td>
+                                    <td>
+                                        <a href="{{asset('uploads/cheque/'.$deposit->front_cheque)}}" data-lightbox="deposit-{{$deposit->id}}">
+                                            <img src="{{asset('uploads/cheque/'.$deposit->front_cheque)}}" width="50">
+                                        </a>
+                                    </td>
+                                    <td>
+                                        @if ($deposit->status == '1')
+                                        <span class="badge bg-success">Completed</span>
+                                        @elseif($deposit->status == '0')
+                                        <span class="badge bg-warning">Pending</span>
+                                        @elseif($deposit->status == '2')
+                                        <span class="badge bg-danger">Declined</span>
+                                        @endif
+                                    </td>
+                                    <td>{{ \Carbon\Carbon::parse($deposit->created_at)->format('D, M j, Y g:i A') }}</td>
+                                    <td class="d-flex flex-column flex-sm-row gap-2">
+                                        <form action="{{ route('admin.approve-deposit', $deposit->id) }}" method="POST" class="me-2">
+                                            @csrf
+                                            <input type="hidden" name="status" value="1">
+                                            <input type="hidden" name="user_id" value="{{$userProfile->id}}">
+                                            <input type="hidden" name="email" value="{{$userProfile->email}}">
+                                            <input type="hidden" name="amount" value="{{$deposit->amount}}">
+                                            <input type="hidden" name="deposit_type" value="{{$deposit->deposit_type}}">
+                                            <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                                        </form>
+                                        <form action="{{ route('admin.decline-deposit', $deposit->id) }}" method="POST" class="me-2">
+                                            @csrf
+                                            <input type="hidden" name="status" value="2">
+                                            <input type="hidden" name="user_id" value="{{$userProfile->id}}">
+                                            <input type="hidden" name="email" value="{{$userProfile->email}}">
+                                            <input type="hidden" name="amount" value="{{$deposit->amount}}">
+                                            <input type="hidden" name="deposit_type" value="{{$deposit->deposit_type}}">
+                                            <button type="submit" class="btn btn-sm btn-danger">Decline</button>
+                                        </form>
+                                        <form action="{{ route('admin.delete-deposit', $deposit->id) }}" method="POST" onsubmit="return confirm('Delete this deposit record permanently?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-dark">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted py-4">
+                                        <i class="bi bi-inbox fs-4 d-block mb-1 opacity-50"></i>
+                                        No deposits yet.
+                                    </td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Loans Tab -->
+                <div class="tab-pane fade" id="loans" role="tabpanel">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-card-collapse">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Transaction ID</th>
+                                    <th>Amount</th>
+                                    <th>Reason</th>
+                                    <th>Documents</th>
+                                    <th>SSN</th>
+                                    <th>Credit Score</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($loan as $loanItem)
+                                <tr>
+                                    <td>{{$loanItem->id}}</td>
+                                    <td>{{$userProfile->currency}}{{number_format($loanItem->amount, 2)}}</td>
+                                    <td>{{$loanItem->reason}}</td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                View Documents
+                                            </button>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item" href="{{asset('uploads/loan/'.$loanItem->license)}}" target="_blank">License</a>
+                                                <a class="dropdown-item" href="{{asset('uploads/loan/'.$loanItem->photoID)}}" target="_blank">Photo ID</a>
+                                                <a class="dropdown-item" href="{{asset('uploads/loan/'.$loanItem->selfie)}}" target="_blank">Selfie</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{$loanItem->ssn}}</td>
+                                    <td>{{$loanItem->credit_score}}</td>
+                                    <td>
+                                        @if ($loanItem->status == '1')
+                                        <span class="badge bg-success">Completed</span>
+                                        @elseif($loanItem->status == '0')
+                                        <span class="badge bg-warning">Pending</span>
+                                        @elseif($loanItem->status == '2')
+                                        <span class="badge bg-danger">Declined</span>
+                                        @endif
+                                    </td>
+                                    <td>{{ \Carbon\Carbon::parse($loanItem->created_at)->format('D, M j, Y g:i A') }}</td>
+                                    <td class="d-flex flex-column flex-sm-row gap-2">
+                                        <form action="{{route('admin.approve-loan', $loanItem->id)}}" method="POST" class="me-2">
+                                            @csrf
+                                            <input type="hidden" name="status" value="1">
+                                            <input type="hidden" name="user_id" value="{{$userProfile->id}}">
+                                            <input type="hidden" name="email" value="{{$userProfile->email}}">
+                                            <input type="hidden" name="amount" value="{{$loanItem->amount}}">
+                                            <input type="hidden" name="reason" value="{{$loanItem->reason}}">
+                                            <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                                        </form>
+                                        <form action="{{route('admin.decline-loan', $loanItem->id)}}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="status" value="2">
+                                            <input type="hidden" name="user_id" value="{{$userProfile->id}}">
+                                            <input type="hidden" name="email" value="{{$userProfile->email}}">
+                                            <input type="hidden" name="amount" value="{{$loanItem->amount}}">
+                                            <input type="hidden" name="reason" value="{{$loanItem->reason}}">
+                                            <button type="submit" class="btn btn-sm btn-danger">Decline</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="9" class="text-center text-muted py-4">
+                                        <i class="bi bi-inbox fs-4 d-block mb-1 opacity-50"></i>
+                                        No loan applications yet.
+                                    </td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- KYC Tab -->
+                <div class="tab-pane fade" id="kyc" role="tabpanel">
+
+                    {{-- Session messages --}}
+                    @if(session('message'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="bi bi-check-circle me-2"></i>{{ session('message') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    @endif
+
+                    {{-- Status banner --}}
+                    <div class="alert mb-4
+                        @if($userProfile->kyc_status=='1') alert-success
+                        @elseif($userProfile->kyc_status=='2') alert-danger
+                        @else alert-warning @endif" role="alert">
+                        <div class="d-flex align-items-center gap-2">
+                            @if($userProfile->kyc_status=='1')
+                                <i class="bi bi-patch-check-fill fs-5"></i>
+                                <strong>KYC Approved</strong> — This user's identity has been verified.
+                            @elseif($userProfile->kyc_status=='2')
+                                <i class="bi bi-x-octagon-fill fs-5"></i>
+                                <strong>KYC Declined</strong> — Documents were rejected.
+                            @elseif($userProfile->id_card || $userProfile->passport || $userProfile->driver_license)
+                                <i class="bi bi-hourglass-split fs-5"></i>
+                                <strong>Pending Review</strong> — Documents have been submitted and are awaiting your approval.
+                            @else
+                                <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                                <strong>No Documents</strong> — This user has not uploaded any ID documents yet.
+                            @endif
+                        </div>
+                    </div>
+
+                    {{-- Document cards --}}
+                    <div class="row g-3 mb-4">
+
+                        {{-- Driver's License --}}
+                        <div class="col-md-4">
+                            <div class="card h-100 border-2 @if($userProfile->driver_license) border-primary @else border-secondary @endif">
+                                <div class="card-header d-flex align-items-center gap-2 @if($userProfile->driver_license) bg-primary text-white @else bg-light text-muted @endif">
+                                    <i class="bi bi-card-heading"></i> Driver's License
+                                    @if($userProfile->driver_license)
+                                        <span class="badge bg-light text-primary ms-auto">Uploaded</span>
+                                    @else
+                                        <span class="badge bg-secondary ms-auto">Not uploaded</span>
+                                    @endif
+                                </div>
+                                <div class="card-body text-center d-flex align-items-center justify-content-center" style="min-height:180px">
+                                    @if($userProfile->driver_license)
+                                        @php $ext = pathinfo($userProfile->driver_license, PATHINFO_EXTENSION); @endphp
+                                        @if(in_array(strtolower($ext), ['jpg','jpeg','png','gif','webp']))
+                                            <a href="{{ asset('uploads/kyc/'.$userProfile->driver_license) }}" target="_blank">
+                                                <img src="{{ asset('uploads/kyc/'.$userProfile->driver_license) }}"
+                                                     class="img-fluid rounded" style="max-height:160px; cursor:zoom-in"
+                                                     alt="Driver's License">
+                                            </a>
+                                        @else
+                                            <a href="{{ asset('uploads/kyc/'.$userProfile->driver_license) }}" target="_blank"
+                                               class="btn btn-outline-primary">
+                                                <i class="bi bi-file-earmark-pdf me-2"></i>View PDF
+                                            </a>
+                                        @endif
+                                    @else
+                                        <div class="text-muted">
+                                            <i class="bi bi-image fs-1 d-block mb-2 opacity-25"></i>
+                                            No document uploaded
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- ID Card (back of licence / secondary doc) --}}
+                        <div class="col-md-4">
+                            <div class="card h-100 border-2 @if($userProfile->id_card) border-success @else border-secondary @endif">
+                                <div class="card-header d-flex align-items-center gap-2 @if($userProfile->id_card) bg-success text-white @else bg-light text-muted @endif">
+                                    <i class="bi bi-credit-card-2-front"></i> ID Card / Reverse
+                                    @if($userProfile->id_card)
+                                        <span class="badge bg-light text-success ms-auto">Uploaded</span>
+                                    @else
+                                        <span class="badge bg-secondary ms-auto">Not uploaded</span>
+                                    @endif
+                                </div>
+                                <div class="card-body text-center d-flex align-items-center justify-content-center" style="min-height:180px">
+                                    @if($userProfile->id_card)
+                                        @php $ext = pathinfo($userProfile->id_card, PATHINFO_EXTENSION); @endphp
+                                        @if(in_array(strtolower($ext), ['jpg','jpeg','png','gif','webp']))
+                                            <a href="{{ asset('uploads/kyc/'.$userProfile->id_card) }}" target="_blank">
+                                                <img src="{{ asset('uploads/kyc/'.$userProfile->id_card) }}"
+                                                     class="img-fluid rounded" style="max-height:160px; cursor:zoom-in"
+                                                     alt="ID Card">
+                                            </a>
+                                        @else
+                                            <a href="{{ asset('uploads/kyc/'.$userProfile->id_card) }}" target="_blank"
+                                               class="btn btn-outline-success">
+                                                <i class="bi bi-file-earmark-pdf me-2"></i>View PDF
+                                            </a>
+                                        @endif
+                                    @else
+                                        <div class="text-muted">
+                                            <i class="bi bi-image fs-1 d-block mb-2 opacity-25"></i>
+                                            No document uploaded
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Passport --}}
+                        <div class="col-md-4">
+                            <div class="card h-100 border-2 @if($userProfile->passport) border-info @else border-secondary @endif">
+                                <div class="card-header d-flex align-items-center gap-2 @if($userProfile->passport) bg-info text-white @else bg-light text-muted @endif">
+                                    <i class="bi bi-journal-bookmark-fill"></i> Passport
+                                    @if($userProfile->passport)
+                                        <span class="badge bg-light text-info ms-auto">Uploaded</span>
+                                    @else
+                                        <span class="badge bg-secondary ms-auto">Not uploaded</span>
+                                    @endif
+                                </div>
+                                <div class="card-body text-center d-flex align-items-center justify-content-center" style="min-height:180px">
+                                    @if($userProfile->passport)
+                                        @php $ext = pathinfo($userProfile->passport, PATHINFO_EXTENSION); @endphp
+                                        @if(in_array(strtolower($ext), ['jpg','jpeg','png','gif','webp']))
+                                            <a href="{{ asset('uploads/kyc/'.$userProfile->passport) }}" target="_blank">
+                                                <img src="{{ asset('uploads/kyc/'.$userProfile->passport) }}"
+                                                     class="img-fluid rounded" style="max-height:160px; cursor:zoom-in"
+                                                     alt="Passport">
+                                            </a>
+                                        @else
+                                            <a href="{{ asset('uploads/kyc/'.$userProfile->passport) }}" target="_blank"
+                                               class="btn btn-outline-info">
+                                                <i class="bi bi-file-earmark-pdf me-2"></i>View PDF
+                                            </a>
+                                        @endif
+                                    @else
+                                        <div class="text-muted">
+                                            <i class="bi bi-image fs-1 d-block mb-2 opacity-25"></i>
+                                            No document uploaded
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Approve / Decline actions --}}
+                    @if($userProfile->id_card || $userProfile->passport || $userProfile->driver_license)
+                    <div class="card border-0 bg-light">
+                        <div class="card-body">
+                            <h6 class="mb-3 fw-bold">Take Action</h6>
+                            <div class="d-flex gap-3 flex-wrap">
+                                <form action="{{ route('admin.accept-kyc', $userProfile->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-success px-4"
+                                        @if($userProfile->kyc_status=='1') disabled @endif>
+                                        <i class="bi bi-check-circle-fill me-2"></i>
+                                        {{ $userProfile->kyc_status=='1' ? 'Already Approved' : 'Approve KYC' }}
+                                    </button>
+                                </form>
+                                <form action="{{ route('admin.decline-kyc', $userProfile->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-danger px-4"
+                                        @if($userProfile->kyc_status=='2') disabled @endif
+                                        onclick="return confirm('Decline this user\'s KYC? They will be notified by email.')">
+                                        <i class="bi bi-x-circle-fill me-2"></i>
+                                        {{ $userProfile->kyc_status=='2' ? 'Already Declined' : 'Decline KYC' }}
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    @else
+                    <div class="alert alert-secondary">
+                        <i class="bi bi-info-circle me-2"></i>
+                        No documents have been submitted yet. Actions will appear once the user uploads their ID.
+                    </div>
+                    @endif
+
+                </div>
+                
+                <!-- Cards Tab -->
+                <div class="tab-pane fade" id="cards" role="tabpanel">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-card-collapse">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Card Number</th>
+                                    <th>CVC</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($usercards as $cards)
+                                <tr>
+                                    <td>{{$cards->card_number}}</td>
+                                    <td>{{$cards->card_cvc}}</td>
+                                    <td>
+                                        @if ($cards->status == '1')
+                                        <span class="badge bg-success">Completed</span>
+                                        @elseif($cards->status == '0')
+                                        <span class="badge bg-warning">Pending</span>
+                                        @elseif($cards->status == '2')
+                                        <span class="badge bg-danger">Declined</span>
+                                        @endif
+                                    </td>
+                                    <td>{{ \Carbon\Carbon::parse($cards->created_at)->format('D, M j, Y g:i A') }}</td>
+                                    <td class="d-flex flex-column flex-sm-row gap-2">
+                                        <form action="{{route('admin.approve-card', $cards->id)}}" method="POST" class="me-2">
+                                            @csrf
+                                            <input type="hidden" name="status" value="1">
+                                            <input type="hidden" name="user_id" value="{{$userProfile->id}}">
+                                            <input type="hidden" name="email" value="{{$userProfile->email}}">
+                                            <input type="hidden" name="amount" value="{{$cards->amount}}">
+                                            <input type="hidden" name="card_number" value="{{$cards->card_number}}">
+                                            <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                                        </form>
+                                        <form action="{{route('admin.decline-card',$cards->id)}}" method="POST" class="me-2">
+                                            @csrf
+                                            <input type="hidden" name="status" value="2">
+                                            <input type="hidden" name="user_id" value="{{$userProfile->id}}">
+                                            <input type="hidden" name="email" value="{{$userProfile->email}}">
+                                            <input type="hidden" name="amount" value="{{$cards->amount}}">
+                                            <input type="hidden" name="card_number" value="{{$cards->card_number}}">
+                                            <button type="submit" class="btn btn-sm btn-danger">Decline</button>
+                                        </form>
+                                        <form action="{{ route('admin.delete-card', $cards->id) }}" method="POST" onsubmit="return confirm('Delete this card record permanently?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-dark">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4">
+                                        <i class="bi bi-inbox fs-4 d-block mb-1 opacity-50"></i>
+                                        No cards yet.
+                                    </td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add lightbox CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
+
+@include('admin.footer')
+
+<!-- Lightbox JS: must load after jQuery (bundled in admin.footer) or its init throws -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+
+<script>
+    (function() {
+        var now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        var val = now.toISOString().slice(0, 16);
+        var credit = document.getElementById('credit_transaction_date');
+        var debit  = document.getElementById('debit_transaction_date');
+        if (credit) credit.value = val;
+        if (debit)  debit.value  = val;
+    })();
+</script>

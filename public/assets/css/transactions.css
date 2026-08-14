@@ -1,0 +1,206 @@
+
+    body {
+      background-color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      padding-bottom: 70px;
+    }
+
+    .btn-main {
+      background-color: #fddbd3;
+      color: #b93b2d;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    .btn-outline-main {
+      border: 1px solid #fddbd3;
+      color: #b93b2d;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    .transaction-box {
+      background-color: #f6f6f6;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: background-color .2s, transform .15s, box-shadow .2s;
+    }
+
+    .transaction-box:hover {
+      background-color: #eee;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,0,0,.06);
+    }
+
+    .transaction-box:active {
+      transform: scale(.98);
+    }
+
+   .bottom-nav {
+      border-top: 1px solid #ddd;
+    }
+
+    .bottom-nav .nav-link {
+      color: #888;
+      font-size: 13px;
+    }
+
+    .bottom-nav .nav-link.active {
+      color: #f26a63;
+    }
+
+    .small-text {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .clickable {
+      cursor: pointer;
+    }
+    
+    /* Transaction specific styles */
+    .transaction-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      margin-right: 15px;
+    }
+    
+    .transaction-success {
+      background-color: #E8F5E9;
+      color: #2E7D32;
+    }
+    
+    .transaction-pending {
+      background-color: #E3F2FD;
+      color: #1565C0;
+    }
+    
+    .transaction-failed {
+      background-color: #FFEBEE;
+      color: #C62828;
+    }
+    
+    .transaction-approved {
+      background-color: #F1F8E9;
+      color: #558B2F;
+    }
+    
+    .transaction-amount {
+      font-weight: 600;
+    }
+    
+    .transaction-date {
+      color: #888;
+      font-size: 12px;
+    }
+    
+    .transaction-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px 0;
+    }
+    
+    .empty-state-icon {
+      font-size: 48px;
+      color: #ddd;
+      margin-bottom: 15px;
+    }
+
+    /* ── Transaction Detail Modal ── */
+    .txn-modal-content {
+      border: none;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .txn-modal-header {
+      background: linear-gradient(135deg, #e51c24, #AC39D4);
+      padding: 30px 24px 24px;
+      text-align: center;
+      position: relative;
+      color: #fff;
+    }
+
+    .txn-modal-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      opacity: .8;
+    }
+
+    .txn-modal-icon-wrap {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.15);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+
+    .txn-modal-amount {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -.5px;
+      margin-bottom: 8px;
+    }
+
+    .txn-modal-header .badge {
+      font-size: 13px;
+      padding: 5px 14px;
+      border-radius: 20px;
+    }
+
+    .txn-modal-body {
+      padding: 20px 24px 28px;
+    }
+
+    .txn-detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 12px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .txn-detail-row:last-child {
+      border-bottom: none;
+    }
+
+    .txn-detail-label {
+      color: #888;
+      font-size: 13px;
+      white-space: nowrap;
+      min-width: 120px;
+    }
+
+    .txn-detail-label i {
+      margin-right: 6px;
+    }
+
+    .txn-detail-value {
+      font-weight: 500;
+      text-align: right;
+      word-break: break-word;
+      max-width: 60%;
+    }
+
+    .txn-detail-desc {
+      font-weight: 400;
+      color: #444;
+    }
