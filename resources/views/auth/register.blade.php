@@ -376,6 +376,10 @@
                         country: '',
                         account_type: '',
                         currency: '',
+                        dob: '',
+                        occupation: '',
+                        source_of_funds: '',
+                        national_insurance_number: '',
                         pin: '',
                         password: '',
                         password_confirmation: '',
@@ -399,7 +403,9 @@
                         if (this.step === 1) {
                             return this.formData.name && this.formData.last_name && this.formData.email
                                 && this.formData.address && this.formData.phone && this.formData.country
-                                && this.formData.account_type && this.formData.pin;
+                                && this.formData.account_type && this.formData.dob && this.formData.occupation
+                                && this.formData.source_of_funds && this.formData.national_insurance_number
+                                && this.formData.pin;
                         } else if (this.step === 2) {
                             return this.formData.password && this.formData.password_confirmation && this.formData.terms;
                         }
@@ -598,6 +604,116 @@
                                                 <i data-lucide="chevron-down" class="h-5 w-5 text-gray-400"></i>
                                             </div>
                                         </div>
+                                    </div>
+
+                                    <!-- Date of Birth -->
+                                    <div>
+                                        <label for="dob" class="block text-sm font-medium text-gray-700 mb-2">Date of Birth *</label>
+                                        <input
+                                            type="date"
+                                            id="dob"
+                                            name="dob"
+                                            x-model="formData.dob"
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                                            required>
+                                        @if ($errors->has('dob'))
+                                        <span class="block mt-1 text-xs text-red-600">{{ $errors->first('dob') }}</span>
+                                        @endif
+                                    </div>
+
+                                    <!-- Occupation -->
+                                    <div>
+                                        <label for="occupation" class="block text-sm font-medium text-gray-700 mb-2">Occupation *</label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 flex items-center pl-3">
+                                                <i data-lucide="briefcase" class="h-5 w-5 text-gray-400"></i>
+                                            </div>
+                                            <select
+                                                id="occupation"
+                                                name="occupation"
+                                                x-model="formData.occupation"
+                                                class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 appearance-none"
+                                                required>
+                                                <option value="" disabled selected>Select occupation</option>
+                                                <option value="Accountant / Finance">Accountant / Finance</option>
+                                                <option value="Administrative / Office Worker">Administrative / Office Worker</option>
+                                                <option value="Architect">Architect</option>
+                                                <option value="Business Owner / Entrepreneur">Business Owner / Entrepreneur</option>
+                                                <option value="Consultant">Consultant</option>
+                                                <option value="Engineer">Engineer</option>
+                                                <option value="Healthcare Professional">Healthcare Professional</option>
+                                                <option value="IT / Technology">IT / Technology</option>
+                                                <option value="Lawyer / Legal Professional">Lawyer / Legal Professional</option>
+                                                <option value="Manager / Executive">Manager / Executive</option>
+                                                <option value="Marketing / Advertising">Marketing / Advertising</option>
+                                                <option value="Teacher / Education">Teacher / Education</option>
+                                                <option value="Sales">Sales</option>
+                                                <option value="Transportation / Logistics">Transportation / Logistics</option>
+                                                <option value="Hospitality / Tourism">Hospitality / Tourism</option>
+                                                <option value="Media / Entertainment">Media / Entertainment</option>
+                                                <option value="Government / Public Sector">Government / Public Sector</option>
+                                                <option value="Agriculture / Farming">Agriculture / Farming</option>
+                                                <option value="Student">Student</option>
+                                                <option value="Retired">Retired</option>
+                                                <option value="Unemployed">Unemployed</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                            <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                                <i data-lucide="chevron-down" class="h-5 w-5 text-gray-400"></i>
+                                            </div>
+                                        </div>
+                                        @if ($errors->has('occupation'))
+                                        <span class="block mt-1 text-xs text-red-600">{{ $errors->first('occupation') }}</span>
+                                        @endif
+                                    </div>
+
+                                    <!-- Source of Funds -->
+                                    <div>
+                                        <label for="source_of_funds" class="block text-sm font-medium text-gray-700 mb-2">Source of Funds *</label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 flex items-center pl-3">
+                                                <i data-lucide="banknote" class="h-5 w-5 text-gray-400"></i>
+                                            </div>
+                                            <select
+                                                id="source_of_funds"
+                                                name="source_of_funds"
+                                                x-model="formData.source_of_funds"
+                                                class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 appearance-none"
+                                                required>
+                                                <option value="" disabled selected>Select source of funds</option>
+                                                <option value="Salary / Employment Income">Salary / Employment Income</option>
+                                                <option value="Business Income">Business Income</option>
+                                                <option value="Self-Employment Income">Self-Employment Income</option>
+                                                <option value="Personal Savings">Personal Savings</option>
+                                                <option value="Pension">Pension</option>
+                                                <option value="Investment Income">Investment Income</option>
+                                                <option value="Dividends">Dividends</option>
+                                                <option value="Inheritance">Inheritance</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                            <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                                <i data-lucide="chevron-down" class="h-5 w-5 text-gray-400"></i>
+                                            </div>
+                                        </div>
+                                        @if ($errors->has('source_of_funds'))
+                                        <span class="block mt-1 text-xs text-red-600">{{ $errors->first('source_of_funds') }}</span>
+                                        @endif
+                                    </div>
+
+                                    <!-- National Insurance Number -->
+                                    <div>
+                                        <label for="national_insurance_number" class="block text-sm font-medium text-gray-700 mb-2">National Insurance Number *</label>
+                                        <input
+                                            type="text"
+                                            id="national_insurance_number"
+                                            name="national_insurance_number"
+                                            x-model="formData.national_insurance_number"
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                                            placeholder="e.g. QQ 12 34 56 C"
+                                            required>
+                                        @if ($errors->has('national_insurance_number'))
+                                        <span class="block mt-1 text-xs text-red-600">{{ $errors->first('national_insurance_number') }}</span>
+                                        @endif
                                     </div>
 
                                     <!-- Transaction PIN -->
