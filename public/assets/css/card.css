@@ -62,68 +62,103 @@
       cursor: pointer;
     }
     
-    /* Card specific styles */
+    /* Card specific styles - matches login page bank-card graphic */
     .card-preview {
-      background: linear-gradient(135deg, #305C89 0%, #1a3a5a 100%);
+      background: linear-gradient(135deg, #ff2028 0%, #e51c24 38%, #8a2aaa 78%, #511660 100%);
       border-radius: 16px;
       padding: 20px;
       color: white;
       margin-bottom: 20px;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.06) inset;
     }
-    
+
     .card-preview::before {
       content: "";
       position: absolute;
-      top: -50px;
-      right: -50px;
-      width: 200px;
-      height: 200px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 50%;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(115deg, rgba(255,255,255,0.16) 0%, transparent 32%);
+      pointer-events: none;
     }
-    
-    .card-preview::after {
-      content: "";
-      position: absolute;
-      bottom: -80px;
-      right: -30px;
-      width: 200px;
-      height: 200px;
-      background: rgba(255,255,255,0.05);
-      border-radius: 50%;
-    }
-    
+
     .card-logo {
       width: 50px;
       margin-bottom: 20px;
     }
-    
-    .card-number {
-      font-size: 18px;
-      letter-spacing: 2px;
-      margin: 20px 0;
-      font-family: monospace;
-    }
-    
-    .card-details {
+
+    .card-top-row {
+      position: relative;
+      z-index: 1;
       display: flex;
+      align-items: flex-start;
       justify-content: space-between;
-      margin-top: 30px;
     }
-    
-    .card-name {
-      font-size: 16px;
+
+    .card-chip {
+      width: 36px;
+      height: 28px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #f4d99a, #d4af61);
+    }
+
+    .card-brand {
+      color: rgba(255,255,255,0.8);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
     }
-    
-    .card-expiry {
-      font-size: 14px;
+
+    .card-number {
+      position: relative;
+      z-index: 1;
+      font-size: 18px;
+      letter-spacing: 0.2em;
+      font-weight: 500;
+      margin: 24px 0;
     }
-    
+
+    .card-details {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .card-bottom-row {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-name {
+      font-size: 13px;
+      letter-spacing: 0.05em;
+      color: rgba(255,255,255,0.85);
+      text-transform: uppercase;
+    }
+
+    .card-wifi {
+      color: rgba(255,255,255,0.85);
+      font-size: 16px;
+      transform: rotate(90deg);
+    }
+
+    .card-expiry {
+      font-size: 13px;
+      color: rgba(255,255,255,0.85);
+    }
+
+    .card-cvv {
+      font-size: 13px;
+      color: rgba(255,255,255,0.85);
+    }
+
     .card-status {
+      position: relative;
+      z-index: 1;
       display: inline-block;
       padding: 5px 10px;
       border-radius: 20px;
@@ -131,15 +166,15 @@
       font-weight: 500;
       margin-bottom: 15px;
     }
-    
+
     .status-pending {
-      background-color: #FFF3E0;
-      color: #E65100;
+      background-color: rgba(255,255,255,0.18);
+      color: #fff;
     }
-    
+
     .status-active {
-      background-color: #E8F5E9;
-      color: #2E7D32;
+      background-color: rgba(255,255,255,0.18);
+      color: #fff;
     }
     
     .card-feature {

@@ -36,7 +36,10 @@
       <!-- Active card -->
       <div class="card-preview mt-3">
         <div class="card-status status-active">ACTIVE</div>
-        <img src="mastercard.png" alt="Card Logo" class="card-logo">
+        <div class="card-top-row">
+          <div class="card-chip"></div>
+          <span class="card-brand">Unova</span>
+        </div>
         <div class="card-number">
           {{ implode(' ', str_split($detail->card_number, 4)) }}
         </div>
@@ -44,11 +47,12 @@
           <div class="card-name">
             {{ Auth::user()->first_name }} {{ Auth::user()->last_name }}
           </div>
-          
-  <div class="card-cvv" id="cvvField" style="font-weight: 500;">
-    CVV <span id="cvvValue">•••</span>
-  </div>
-
+          <i class="bi bi-wifi card-wifi"></i>
+        </div>
+        <div class="card-bottom-row d-flex justify-content-between align-items-center mt-2">
+          <div class="card-cvv" id="cvvField" style="font-weight: 500;">
+            CVV <span id="cvvValue">•••</span>
+          </div>
           <div class="card-expiry">
             Exp: {{ \Carbon\Carbon::parse($detail->card_expiry)->format('m/y') }}
           </div>
