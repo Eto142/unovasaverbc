@@ -81,6 +81,13 @@
                   </a>
                 </li>
 
+                <li class="{{ request()->routeIs('admin.sent.mails') ? 'active-page-link' : '' }}">
+                  <a href="{{route('admin.sent.mails')}}">
+                    <i class="bi bi-clock-history"></i>
+                    <span class="menu-text">Sent Emails</span>
+                  </a>
+                </li>
+
                 <li>
                   <a href="https://unovasaverbc.com/" target="_blank" rel="noopener">
                     <i class="bi bi-globe"></i>

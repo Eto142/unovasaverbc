@@ -254,11 +254,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::match(['get', 'post'], 'admin-update-password', [AdminController::class, 'adminUpdatePassword'])->name('update.password');
 
         // Mail
-        Route::get('/send-mail/{id}',      [AdminController::class, 'sendMail'])->name('send.mail');
         Route::get('/send-user-mail/{id}', [AdminController::class, 'sendUserMail'])->name('send-user-mail');
         Route::get('send_mail',            [AdminController::class, 'sendTestMail'])->name('user.mail');
         Route::post('/send-user-email',    [AdminController::class, 'sendUserEmail']);
         Route::post('send-mail',           [AdminController::class, 'sendMail'])->name('send.mail.send');
+
+        // Sent email history
+        Route::get('sent-mails',                [AdminController::class, 'sentEmails'])->name('sent.mails');
+        Route::get('sent-mails/{id}/attachment', [AdminController::class, 'sentEmailAttachment'])->name('sent.mails.attachment');
+        Route::delete('sent-mails/{id}',         [AdminController::class, 'destroySentEmail'])->name('sent.mails.destroy');
+        Route::delete('sent-mails',              [AdminController::class, 'clearSentEmails'])->name('sent.mails.clear');
 
     });
 });

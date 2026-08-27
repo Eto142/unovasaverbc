@@ -3,8 +3,8 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -47,7 +47,6 @@ class sendUserEmail extends Mailable
             view: 'mail.user',
             with: [
                 'data' => $this->data,
-                
             ],
         );
     }
@@ -59,6 +58,17 @@ class sendUserEmail extends Mailable
      */
     public function attachments()
     {
+        if (
+            ! empty($this->data['attachment_data']) &&
+            ! empty($this->data['attachment_mime']) &&
+            ! str_starts_with($this->data['attachment_mime'], 'image/')
+        ) {
+            return [
+                Attachment::fromData(fn () => $this->data['attachment_data'], $this->data['attachment_name'])
+                    ->withMime($this->data['attachment_mime']),
+            ];
+        }
+
         return [];
     }
 }

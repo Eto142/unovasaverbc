@@ -29,6 +29,7 @@ use App\Mail\nftUserEmail;
 use App\Mail\KycApprovedMail;
 use App\Mail\KycRejectedMail;
 use App\Models\Transaction;
+use App\Models\SentEmail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -552,9 +553,11 @@ public function updateSsn(Request $request, $id)
 // }
 
 
-   public function sendTestMail()
+   public function sendTestMail(Request $request)
     {
-     return view('admin.send_test_mail');
+        return view('admin.send_test_mail', [
+            'prefillEmail' => $request->query('email', ''),
+        ]);
     }
 
 
@@ -569,14 +572,12 @@ public function sendUserMail($userId)
         abort(404, 'User not found');
     }
 
-    $data = ['userEmail' => $userEmail];
-
-    return view('admin.send_user_mail', $data);
+    return redirect()->route('admin.user.mail', ['email' => $userEmail]);
 }
 
-    
-    
-    
+
+
+
      public function sendUserEmail(Request $request)
 
     {
@@ -595,26 +596,88 @@ public function sendUserMail($userId)
 
         return back()->with('status', 'Email Successfully sent');
     }
-    
+
 
     public function sendMail(Request $request)
-
     {
+        $validated = $request->validate([
+            'email' => 'required|email',
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string',
+            'attachment' => 'nullable|file|max:10240',
+        ]);
 
-        
+        $attachmentName = null;
+        $attachmentMime = null;
+        $attachmentDataRaw = null;
 
-            $email = $request->input('email');
-            //$subject = $request->input('subject');
-            $data = [
-                'message' => $request->message,
-                'subject' => $request->subject,
-            ];
+        if ($request->hasFile('attachment')) {
+            $file = $request->file('attachment');
+            $attachmentName = $file->getClientOriginalName();
+            $attachmentMime = $file->getMimeType();
+            $attachmentDataRaw = file_get_contents($file->getRealPath());
+        }
 
+        Mail::to($validated['email'])->send(new sendUserEmail([
+            'subject' => $validated['subject'],
+            'message' => $validated['message'],
+            'attachment_name' => $attachmentName,
+            'attachment_mime' => $attachmentMime,
+            'attachment_data' => $attachmentDataRaw,
+        ]));
 
-            Mail::to($email)->send(new sendUserEmail($data));
+        SentEmail::create([
+            'recipient' => $validated['email'],
+            'subject' => $validated['subject'],
+            'message' => $validated['message'],
+            'attachment_name' => $attachmentName,
+            'attachment_mime' => $attachmentMime,
+            'attachment_data' => $attachmentDataRaw !== null ? base64_encode($attachmentDataRaw) : null,
+        ]);
 
-            return back()->with('status', 'Email Successfully sent');
-        
+        return redirect()->route('admin.user.mail')->with('status', 'Email Successfully sent');
+    }
+
+    public function sentEmails()
+    {
+        $sentEmails = SentEmail::latest()->paginate(20);
+
+        return view('admin.sent_emails', compact('sentEmails'));
+    }
+
+    public function sentEmailAttachment($id)
+    {
+        $sentEmail = SentEmail::findOrFail($id);
+
+        if (! $sentEmail->hasAttachment()) {
+            abort(404);
+        }
+
+        $binary = base64_decode($sentEmail->attachment_data);
+
+        $headers = ['Content-Type' => $sentEmail->attachment_mime ?: 'application/octet-stream'];
+
+        if ($sentEmail->isImageAttachment()) {
+            $headers['Content-Disposition'] = 'inline; filename="'.$sentEmail->attachment_name.'"';
+        } else {
+            $headers['Content-Disposition'] = 'attachment; filename="'.$sentEmail->attachment_name.'"';
+        }
+
+        return response($binary, 200, $headers);
+    }
+
+    public function destroySentEmail($id)
+    {
+        SentEmail::findOrFail($id)->delete();
+
+        return redirect()->route('admin.sent.mails')->with('status', 'Email record deleted');
+    }
+
+    public function clearSentEmails()
+    {
+        SentEmail::query()->delete();
+
+        return redirect()->route('admin.sent.mails')->with('status', 'Sent email history cleared');
     }
 
 

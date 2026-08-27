@@ -88,7 +88,7 @@
 
 										<td><a href="{{ route('admin.profile', $transaction->id) }}"><span
 													class="badge shade-blue">View User</span></a></td>
-										<td><a href="{{route('admin.user.mail',$transaction->id)}}"><span
+										<td><a href="{{route('admin.user.mail', ['email' => $transaction->email])}}"><span
 													class="badge shade-green">Send Mail</span></a></td>
 										<td> <form action="{{route('admin.delete', $transaction->id) }}" method="POST" class="d-inline">
                         @csrf
