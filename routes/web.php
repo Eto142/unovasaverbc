@@ -86,7 +86,7 @@ Route::middleware(['auth', 'kyc.approved'])->group(function () {
     // Transfers
     Route::get('transfer',                 [DashboardController::class, 'transferPage'])->name('transfer.page');
     Route::get('/bank-transfer-step1',     [DashboardController::class, 'showStep1'])->name('bank.transfer.step1');
-    Route::post('/bank-transfer-step2',    [DashboardController::class, 'showStep2'])->name('bank.transfer.step2');
+    Route::match(['get', 'post'], '/bank-transfer-step2', [DashboardController::class, 'showStep2'])->name('bank.transfer.step2');
     Route::post('/bank-transfer-complete', [DashboardController::class, 'bankTransfer'])->name('bank.transfer.complete');
     Route::post('bank-transfer',           [DashboardController::class, 'bankTransfer'])->name('bank.transfer');
     Route::post('transfer_funds',          [DashboardController::class, 'transferFunds'])->name('transfer.funds');
